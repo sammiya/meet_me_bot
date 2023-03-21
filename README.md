@@ -46,7 +46,7 @@ sqlite3 meet-me-bot.db < schema.sql
 sqlite3 meet-me-bot.db
 ```
 
-## API キー取得方法
+## API キー取得・サーバーへの bot 追加方法
 
 1. [Discord 開発者ポータル](https://discord.com/developers/applications)にアクセスし、Discord アカウントでログインする。
 
