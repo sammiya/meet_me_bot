@@ -24,7 +24,7 @@ MEETING_ANNOUNCER_ID = int(os.getenv('DISCORD_MEETING_ANNOUNCER'))
 # タイムゾーンを設定
 JST = pytz.timezone('Asia/Tokyo')
 
-intents = discord.Intents().all()  # すべてのイベントを有効化
+intents = discord.Intents(messages=True, guilds=True, reactions=True, message_content=True)
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
