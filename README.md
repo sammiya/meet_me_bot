@@ -20,6 +20,32 @@ ChatGPT の手を借りて作成しています。
 pip install -r requirements.txt
 ```
 
+## 起動
+
+```
+python meet-me-bot.py
+```
+
+## sqlite3 について
+
+### インストール
+
+```
+sudo apt-get install sqlite3
+```
+
+### スキーマ作成
+
+```
+sqlite3 meet-me-bot.db < schema.sql
+```
+
+### 接続コマンド（デバッグ用）
+
+```
+sqlite3 meet-me-bot.db
+```
+
 ## API キー取得方法
 
 1. [Discord 開発者ポータル](https://discord.com/developers/applications)にアクセスし、Discord アカウントでログインする。
@@ -53,22 +79,3 @@ pip install -r requirements.txt
 2. 左下の「ユーザー設定」アイコン（歯車）をクリックする。
 3. 「詳細設定」をクリックする。
 4. 「開発者モード」をオンにする。
-
-## sqlite3
-
-### インストール
-
-sudo apt-get install sqlite3
-
-### 接続
-
-sqlite3 meet-me-bot.db
-
-### スキーマ作成
-
-```
-CREATE TABLE meetings (
-    date TEXT NOT NULL,
-    pre_notification_sent INTEGER
-);
-```
