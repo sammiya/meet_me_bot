@@ -74,7 +74,7 @@ async def on_message(message):
             return
 
         scheduled_time_str = row[0]
-        scheduled_time = datetime.datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S').astimezone(JST)
+        scheduled_time = datetime.datetime.strptime(scheduled_time_str, '%Y-%m-%d %H:%M:%S').astimezone(JST)
         formatted = scheduled_time.strftime('%-m/%-d') + f'（{WEEKDAYS[scheduled_time.weekday()]}）'
         await channel.send(f'次回予定: {formatted}')
 
