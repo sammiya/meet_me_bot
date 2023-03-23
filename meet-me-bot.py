@@ -63,6 +63,7 @@ async def scheduled_message():
         cursor.execute("DELETE FROM meetings")
         conn.commit()
 
+# メッセージが送信されたときのイベントを処理する関数を定義する
 @bot.event
 async def on_message(message):
     if is_asking_next_date(message.content):
