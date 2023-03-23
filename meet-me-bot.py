@@ -100,8 +100,7 @@ async def on_message(message):
 async def on_ready():
     """
     BotがDiscordにログインして準備ができたときに呼び出される関数。
-    ログインしたことを確認するために、Botの名前を出力し、
-    1回だけメッセージを送信するようにBotに指示する。
+    ログインしたことを確認するために、Botの名前を出力する。
     """
     print(f'We have logged in as {bot.user}')
     channel = bot.get_channel(CHANNEL_ID)
