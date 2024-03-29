@@ -1,10 +1,10 @@
-# meet-me-bot
+# meet_me_bot
 
 Discord の特定のチャンネルに予定を通知するものです。
 
 個人的な用途のために作成しているので、時刻が毎回 21 時に固定されているなど汎用的でない部分があります。
 
-ChatGPT の手を借りて作成しています。
+※2024-03-29 Python から Go に移行 以前の Python 版は [こちら](releases/tag/python)
 
 ## 機能一覧
 
@@ -14,30 +14,12 @@ ChatGPT の手を借りて作成しています。
 - 1 時間前および予定時刻には同チャンネルでお知らせをする。
 - 「次いつ？」のような文言を書きこむと次回の予定を教えてくれる。
 
-## install
-
-```
-pip install -r requirements.txt
-```
-
-## 起動
-
-```
-python meet-me-bot.py
-```
-
 ## sqlite3 について
 
 ### インストール
 
 ```
 sudo apt-get install sqlite3
-```
-
-### スキーマ作成
-
-```
-sqlite3 meet-me-bot.db < schema.sql
 ```
 
 ### 接続コマンド（デバッグ用）
