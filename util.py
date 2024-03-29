@@ -1,5 +1,6 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
+
 
 def parse_next_date(text):
     match = re.search(r'次回[^\d]*(\d{1,2}/\d{1,2})', text)
@@ -16,6 +17,7 @@ def parse_next_date(text):
         return None
 
     return next_date
+
 
 def is_asking_next_date(text):
     pattern = r'次.*いつ'

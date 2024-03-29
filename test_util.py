@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 from util import parse_next_date
 
+
 class TestUtil(unittest.TestCase):
     def test_parse_next_date(self):
         # テストケースを定義
@@ -16,6 +17,7 @@ class TestUtil(unittest.TestCase):
         for text, expected in test_cases:
             with self.subTest(text=text):
                 self.assertEqual(parse_next_date(text), expected)
+
 
 if __name__ == '__main__':
     unittest.main()
