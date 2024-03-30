@@ -19,7 +19,7 @@ func PrepareDB(filepath string) (*sql.DB, error) {
 			date TEXT NOT NULL,
 			pre_notification_sent INTEGER NOT NULL
 		)
-		`);
+		`)
 
 	if err != nil {
 		return nil, err
