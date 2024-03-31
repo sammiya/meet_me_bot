@@ -3,6 +3,9 @@
 
 name: Go
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: ["main"]
@@ -10,7 +13,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -26,15 +29,45 @@ jobs:
       - name: Lint
         run: staticcheck ./...
 
-
       - name: Test
         run: go test -v ./...
+
+  release:
+    runs-on: ubuntu-20.04
+    needs: test
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
 
       - name: Build
         run: go build -v .
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Get Current Timestamp
+        id: current_timestamp
+        run: echo "::set-output name=timestamp::$(date +'%y%m%d%H%M%S')"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: build
-          path: ./meet_me_bot
+          tag_name: ${{ github.sha }}-${{ steps.current_timestamp.outputs.timestamp }}
+          release_name: Release ${{ github.sha }}-${{ steps.current_timestamp.outputs.timestamp }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./meet_me_bot
+          asset_name: meet_me_bot
+          asset_content_type: application/octet-stream
