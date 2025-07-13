@@ -51,7 +51,7 @@ func TestStorage(t *testing.T) {
 		t.Fatalf("UpdatePreNotificationSent failed: %v", err)
 	}
 
-	meeting, preNotificationSent, err = GetMeeting(tempFile)
+	_, preNotificationSent, err = GetMeeting(tempFile)
 	if err != nil {
 		t.Fatalf("GetMeeting failed: %v", err)
 	}
