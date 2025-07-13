@@ -26,7 +26,7 @@ Discord の特定のチャンネルに予定を通知するものです。
 
 5. Bot の設定を変更し、必要に応じて Bot のアバターや名前を設定する。このとき Privileged Gateway Intents の「MESSAGE CONTENT INTENT」を有効にすること。
 
-6. 「Oauth2」の「URL Generator」タブから、以下を選択して GERERATED URL をクリックし、bot をサーバーに追加するか聞かれるので「はい」を選択する。
+6. 「Oauth2」の「URL Generator」タブから、以下を選択して GENERATED URL をクリックし、bot をサーバーに追加するか聞かれるので「はい」を選択する。
 
 - SCOPES
   - bot
