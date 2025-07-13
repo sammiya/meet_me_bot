@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -15,8 +14,8 @@ import (
 	"meet_me_bot/utils"
 )
 
-// SQLite のデータベースファイルの名前
-var dbFile = "meet_me_bot.db"
+// JSON データファイルの名前
+var dataFile = "meet_me_bot.json"
 
 func main() {
 	err := godotenv.Load()
@@ -38,13 +37,7 @@ func main() {
 		log.Fatal("Error creating Discord session: ", err)
 	}
 
-	db, err := utils.PrepareDB(dbFile)
-	if err != nil {
-		log.Fatal("Failed to prepare database: ", err)
-	}
-	defer db.Close()
-
-	dg.AddHandler(messageCreate(channelID, announcerID, db))
+	dg.AddHandler(messageCreate(channelID, announcerID, dataFile))
 
 	err = dg.Open()
 	if err != nil {
@@ -57,7 +50,7 @@ func main() {
 
 	go func() {
 		for range ticker.C {
-			scheduledMessage(dg, channelID, db)
+			scheduledMessage(dg, channelID, dataFile)
 		}
 	}()
 
@@ -70,14 +63,14 @@ func main() {
 	dg.Close()
 }
 
-func messageCreate(channelID string, announcerID string, db *sql.DB) func(s *discordgo.Session, m *discordgo.MessageCreate) {
+func messageCreate(channelID string, announcerID string, dataFile string) func(s *discordgo.Session, m *discordgo.MessageCreate) {
 	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if m.ChannelID != channelID {
 			return
 		}
 
 		if utils.IsAskingNextDate(m.Content) {
-			meeting, _, err := utils.GetMeeting(db)
+			meeting, _, err := utils.GetMeeting(dataFile)
 
 			if err != nil {
 				log.Println("Error getting meeting: ", err)
@@ -111,7 +104,7 @@ func messageCreate(channelID string, announcerID string, db *sql.DB) func(s *dis
 		}
 
 		if parsedDate != nil {
-			err := utils.AddMeeting(db, *parsedDate)
+			err := utils.AddMeeting(dataFile, *parsedDate)
 
 			if err != nil {
 				err = s.MessageReactionAdd(m.ChannelID, m.ID, "👎")
@@ -131,10 +124,10 @@ func messageCreate(channelID string, announcerID string, db *sql.DB) func(s *dis
 	}
 }
 
-func scheduledMessage(dg *discordgo.Session, channelID string, db *sql.DB) {
+func scheduledMessage(dg *discordgo.Session, channelID string, dataFile string) {
 	fmt.Println("Scheduled message")
 
-	nextTime, preNotificationSent, err := utils.GetMeeting(db)
+	nextTime, preNotificationSent, err := utils.GetMeeting(dataFile)
 
 	if err != nil {
 		log.Println("Error getting meeting: ", err)
@@ -153,7 +146,7 @@ func scheduledMessage(dg *discordgo.Session, channelID string, db *sql.DB) {
 
 		dg.ChannelMessageSend(channelID, "1時間前だよ")
 
-		utils.UpdatePreNotificationSent(db)
+		utils.UpdatePreNotificationSent(dataFile)
 	}
 
 	if remainingSeconds < 60 {
@@ -161,7 +154,7 @@ func scheduledMessage(dg *discordgo.Session, channelID string, db *sql.DB) {
 
 		dg.ChannelMessageSend(channelID, "はじまるよ")
 
-		utils.ClearMeetings(db)
+		utils.ClearMeeting(dataFile)
 	}
 
 }

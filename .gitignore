@@ -20,5 +20,5 @@ go.work
 # Environment variable file
 .env
 
-# SQLite database file
-meet_me_bot.db
+# JSON data file
+meet_me_bot.json
