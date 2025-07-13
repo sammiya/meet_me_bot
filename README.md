@@ -14,20 +14,6 @@ Discord の特定のチャンネルに予定を通知するものです。
 - 1 時間前および予定時刻には同チャンネルでお知らせをする。
 - 「次いつ？」のような文言を書きこむと次回の予定を教えてくれる。
 
-## sqlite3 について
-
-### インストール
-
-```
-sudo apt-get install sqlite3
-```
-
-### 接続コマンド（デバッグ用）
-
-```
-sqlite3 meet-me-bot.db
-```
-
 ## API キー取得・サーバーへの bot 追加方法
 
 1. [Discord 開発者ポータル](https://discord.com/developers/applications)にアクセスし、Discord アカウントでログインする。
