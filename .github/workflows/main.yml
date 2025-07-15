@@ -16,18 +16,21 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.24"
 
       - name: Install staticcheck
         run: go install honnef.co/go/tools/cmd/staticcheck@latest
 
-      - name: Lint
+      - name: Lint Go code
         run: staticcheck ./...
+
+      - name: Lint GitHub Actions workflow
+        uses: reviewdog/action-actionlint@v1
 
       - name: Test
         run: go test -v ./...
@@ -37,10 +40,10 @@ jobs:
     needs: test
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.24"
 
@@ -49,7 +52,7 @@ jobs:
 
       - name: Get Current Timestamp
         id: current_timestamp
-        run: echo "::set-output name=timestamp::$(date +'%y%m%d%H%M%S')"
+        run: echo "timestamp=$(date +'%y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
