@@ -96,6 +96,44 @@ func messageCreate(channelID string, announcerID string, dataFile string) func(s
 			return
 		}
 
+		// 無言メンションのチェック（メンションしてくれるだけでテキストなし）
+		if len(m.Mentions) > 0 && m.Content == "<@"+s.State.User.ID+">" {
+			lastNotificationDate, err := utils.GetLastNotificationDate(dataFile)
+			if err != nil {
+				log.Println("Error getting last notification date: ", err)
+				return
+			}
+
+			if lastNotificationDate == nil {
+				_, err := s.ChannelMessageSend(m.ChannelID, "最後の通知日が見つからないよ")
+				if err != nil {
+					log.Println("Error sending message: ", err)
+				}
+				return
+			}
+
+			err = utils.SetNextWeekMeeting(dataFile, *lastNotificationDate)
+			if err != nil {
+				log.Println("Error setting next week meeting: ", err)
+				return
+			}
+
+			// 新しい予定を取得して通知
+			nextDate, _, err := utils.GetMeeting(dataFile)
+			if err != nil {
+				log.Println("Error getting meeting: ", err)
+				return
+			}
+
+			if nextDate != nil {
+				_, err = s.ChannelMessageSend(m.ChannelID, "次回予定: "+utils.FormatDate(*nextDate))
+				if err != nil {
+					log.Println("Error sending message: ", err)
+				}
+			}
+			return
+		}
+
 		parsedDate, err := utils.ParseNextDate(time.Now().In(utils.JST), m.Content)
 
 		if err != nil {
@@ -153,6 +191,9 @@ func scheduledMessage(dg *discordgo.Session, channelID string, dataFile string) 
 		time.Sleep(time.Duration(remainingSeconds) * time.Second)
 
 		dg.ChannelMessageSend(channelID, "はじまるよ")
+
+		// 最後の通知日を保存
+		utils.UpdateLastNotificationDate(dataFile, *nextTime)
 
 		utils.ClearMeeting(dataFile)
 	}

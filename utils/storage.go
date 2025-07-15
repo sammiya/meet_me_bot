@@ -11,6 +11,7 @@ import (
 type MeetingData struct {
 	Date                  *time.Time `json:"date"`
 	PreNotificationSent   bool       `json:"pre_notification_sent"`
+	LastNotificationDate  *time.Time `json:"last_notification_date"`
 }
 
 // LoadMeeting は JSONファイルから予定情報を読み込む
@@ -43,18 +44,64 @@ func SaveMeeting(filepath string, meeting *MeetingData) error {
 	return os.WriteFile(filepath, data, 0644)
 }
 
-// ClearMeeting は予定情報をクリアする
-func ClearMeeting(filepath string) error {
-	emptyMeeting := &MeetingData{}
-	return SaveMeeting(filepath, emptyMeeting)
+// UpdateLastNotificationDate は最後の通知日を更新する
+func UpdateLastNotificationDate(filepath string, date time.Time) error {
+	meeting, err := LoadMeeting(filepath)
+	if err != nil {
+		return err
+	}
+
+	meeting.LastNotificationDate = &date
+	return SaveMeeting(filepath, meeting)
+}
+
+// GetLastNotificationDate は最後の通知日を取得する
+func GetLastNotificationDate(filepath string) (*time.Time, error) {
+	meeting, err := LoadMeeting(filepath)
+	if err != nil {
+		return nil, err
+	}
+
+	return meeting.LastNotificationDate, nil
+}
+
+// SetNextWeekMeeting は1週間後の21:00に予定を設定する
+func SetNextWeekMeeting(filepath string, baseDate time.Time) error {
+	meeting, err := LoadMeeting(filepath)
+	if err != nil {
+		return err
+	}
+	
+	nextWeek := baseDate.AddDate(0, 0, 7)
+	nextWeekAt21 := time.Date(nextWeek.Year(), nextWeek.Month(), nextWeek.Day(), 21, 0, 0, 0, JST)
+	
+	meeting.Date = &nextWeekAt21
+	meeting.PreNotificationSent = false
+	// LastNotificationDateは既存の値を保持
+	return SaveMeeting(filepath, meeting)
 }
 
 // AddMeeting は新しい予定を設定する
 func AddMeeting(filepath string, date time.Time) error {
-	meeting := &MeetingData{
-		Date:                &date,
-		PreNotificationSent: false,
+	meeting, err := LoadMeeting(filepath)
+	if err != nil {
+		return err
 	}
+	
+	meeting.Date = &date
+	meeting.PreNotificationSent = false
+	return SaveMeeting(filepath, meeting)
+}
+
+// ClearMeeting は予定情報をクリアする（最後の通知日は保持）
+func ClearMeeting(filepath string) error {
+	meeting, err := LoadMeeting(filepath)
+	if err != nil {
+		return err
+	}
+	
+	meeting.Date = nil
+	meeting.PreNotificationSent = false
 	return SaveMeeting(filepath, meeting)
 }
 
